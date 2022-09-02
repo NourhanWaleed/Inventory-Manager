@@ -1,8 +1,24 @@
-const mongoose_it = require('mongoose')
-const Item = mongoose_it.model('Item', {
+const mongoose= require('mongoose')
+const itemSchema = new mongoose.Schema({
     name:{
         type: String,
         required:true,
         trim: true
+    },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Category'
+    },
+    purchaseorderitem: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Purchase_Order_Item'
     }
 })
+
+const Item = mongoose.model('Item', itemSchema)
+
+module.exports = Item
+
+export{}
