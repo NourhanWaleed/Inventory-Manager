@@ -1,21 +1,6 @@
-const express = require('express')
-const Vendor = require('./models/vendor.ts')    //cant redclare it again
-const app = express()
-const port = process.env.PORT || 3000
+const app = require('./app')
 const mongoose = require('mongoose')
-app.use(express.json())
-
-app.post('/vendors', (req:any,res:any) => {
-    const vendor = new Vendor(req.body)
-    vendor.save().then(() => {
-        res.send(vendor)
-    }).catch((error: any) => {
-console.log(error)
-    })
-})
-
-export{}
-
+const port = process.env.PORT || 3000
 
 //note: I know this is not the cleanest code I can write but it kept timingout and I found this solution on stackoverflow
 async function start() {
@@ -38,3 +23,5 @@ async function start() {
     }
   }
   start()
+
+  export{}

@@ -60,7 +60,7 @@ vendorSchema.methods.generateAuthToken = async function () {
     return token
 }
 
-vendorSchema.statics.findByCredentials = async function (email: string| any, password: string|any) {
+vendorSchema.statics.findByCredentials = async function(email: string| any, password: string|any) {
     const vendor = await Vendor.findOne({ email })
 
     if (!vendor) {

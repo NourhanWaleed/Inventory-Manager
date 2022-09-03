@@ -9,25 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const app = require('./app');
-const mongoose = require('mongoose');
-const port = process.env.PORT || 3000;
-//note: I know this is not the cleanest code I can write but it kept timingout and I found this solution on stackoverflow
-function start() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            //Database Connect
-            yield mongoose.connect('mongodb://127.0.0.1:27017/inventory-manager-api', {}, () => {
-                console.log("Database Connected");
-            });
-            app.listen(3000, () => {
-                console.log("Server is running on port 3000 ...");
-            });
+const jwt = require('jsonwebtoken');
+const Vendor = require('../models/vendor');
+const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const token = req.header('Authorization').replace('Bearer ', '');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const vendor = yield Vendor.findOne({ _id: decoded._id, 'tokens.token': token });
+        if (!vendor) {
+            throw new Error();
         }
-        catch (error) {
-            console.error(error);
-        }
-    });
-}
-start();
-//# sourceMappingURL=index.js.map
+        req.token = token;
+        req.vendor = vendor;
+        next();
+    }
+    catch (e) {
+        res.status(401).send({ error: 'Please authenticate.' });
+    }
+});
+module.exports = auth;
+//# sourceMappingURL=auth.js.map
