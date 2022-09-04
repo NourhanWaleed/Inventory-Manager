@@ -2,7 +2,7 @@ const express = require('express')
 const Item= require('../models/item')
 const router = new express.Router()
 
-router.post('/items/:id', async (req:any, res:any) =>{
+router.post('/items', async (req:any, res:any) =>{
     const item = new Item(req.body)
     try{
     await item.save()
@@ -50,6 +50,18 @@ router.patch('/items/:id', async(req: any, res: any) =>{
         res.send(item)
     }catch(e){
         res.status(400).send(e)
+    }
+})
+
+router.delete('/items/:id', async(req: any, res: any) => {
+    try{
+        const item = await Item.findByIdAndDelete(req.params.id)
+            if(!item){
+                return res.status(404).send()
+            }
+            res.send(item)
+    } catch (e) {
+res.status(500).send()
     }
 })
 

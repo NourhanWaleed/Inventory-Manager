@@ -63,6 +63,18 @@ router.patch('/vendors/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.status(400).send(e);
     }
 }));
+router.delete('/vendors/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const vendor = yield Vendor.findByIdAndDelete(req.params.id);
+        if (!vendor) {
+            return res.status(404).send();
+        }
+        res.send(vendor);
+    }
+    catch (e) {
+        res.status(500).send();
+    }
+}));
 /*
 router.post('/users/login', async (req, res) => {
     try {

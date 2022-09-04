@@ -57,6 +57,18 @@ router.patch('/vendors/:id', async(req: any,res:any) => {
     }
 })
 
+router.delete('/vendors/:id', async(req: any, res: any) => {
+    try{
+        const vendor = await Vendor.findByIdAndDelete(req.params.id)
+            if(!vendor){
+                return res.status(404).send()
+            }
+            res.send(vendor)
+    } catch (e) {
+res.status(500).send()
+    }
+})
+
 /*
 router.post('/users/login', async (req, res) => {
     try {

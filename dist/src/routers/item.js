@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const express = require('express');
 const Item = require('../models/item');
 const router = new express.Router();
-router.post('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/items', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const item = new Item(req.body);
     try {
         yield item.save();
@@ -56,6 +56,18 @@ router.patch('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
     catch (e) {
         res.status(400).send(e);
+    }
+}));
+router.delete('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const item = yield Item.findByIdAndDelete(req.params.id);
+        if (!item) {
+            return res.status(404).send();
+        }
+        res.send(item);
+    }
+    catch (e) {
+        res.status(500).send();
     }
 }));
 module.exports = router;
