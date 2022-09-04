@@ -28,12 +28,12 @@ const vendorSchema = new mongoose.Schema({
         trim: true,
        
     },
-    tokens: [{
+    /*tokens: [{
         token: {
             type: String,
             required: true
         }
-    }],
+    }]*/
 })
 
 vendorSchema.virtual('purchaseorders',{

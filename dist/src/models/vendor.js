@@ -36,12 +36,12 @@ const vendorSchema = new mongoose.Schema({
         minlength: 7,
         trim: true,
     },
-    tokens: [{
-            token: {
-                type: String,
-                required: true
-            }
-        }],
+    /*tokens: [{
+        token: {
+            type: String,
+            required: true
+        }
+    }]*/
 });
 vendorSchema.virtual('purchaseorders', {
     ref: 'Purchase_Order',

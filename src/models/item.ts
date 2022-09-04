@@ -8,11 +8,10 @@ const itemSchema = new mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'Category'
+        ref: 'category'
     },
     purchaseorderitem: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
         ref: 'Purchase_Order_Item'
     }
 })

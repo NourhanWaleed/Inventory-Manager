@@ -2,7 +2,7 @@ const express = require('express')
 const multer = require('multer')
 const sharp = require('sharp')
 const Vendor = require('../models/vendor')
-const auth = require('../middleware/auth')
+//const auth = require('../middleware/auth')
 const router = new express.Router()
 
 router.post('/vendors', async (req: any, res: any) => {
@@ -10,12 +10,24 @@ router.post('/vendors', async (req: any, res: any) => {
 
     try {
         await vendor.save()
-        const token = await vendor.generateAuthToken()
-        res.status(201).send({ vendor, token })
+       // const token = await vendor.generateAuthToken()
+        res.status(201).send({ vendor})
     } catch (e) {
         console.log(e)
         res.status(400).send(e)
     }
+})
+
+router.get('/vendors',async (req:any, res:any) =>{
+    Vendor.find({}).then((vendors: any) =>{
+        res.send(vendors)
+    }).catch((e: any) =>{
+        console.log(e)
+    })
+})
+
+router.get('/vendors/:id', async (req:any, res:any) => {
+    res.send(req.vendor)
 })
 /*
 router.post('/users/login', async (req, res) => {
