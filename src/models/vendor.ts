@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const Purchase_Order = require('./purchaseorder')
 const vendorSchema = new mongoose.Schema({
     name: {
@@ -28,12 +28,12 @@ const vendorSchema = new mongoose.Schema({
         trim: true,
        
     },
-    /*tokens: [{
+    tokens: [{
         token: {
             type: String,
             required: true
         }
-    }]*/
+    }]
 })
 
 vendorSchema.virtual('purchaseorders',{
@@ -52,15 +52,14 @@ vendorSchema.methods.toJSON = function () {
 
 vendorSchema.methods.generateAuthToken = async function () {
     const vendor = this
-    const token = jwt.sign({ _id: vendor._id.toString() }, process.env.JWT_SECRET)
-
+    const token = jwt.sign({ _id: vendor._id.toString() }, 'secret')
     vendor.tokens = vendor.tokens.concat({ token })
     await vendor.save()
 
     return token
 }
 
-vendorSchema.statics.findByCredentials = async function(email: string| any, password: string|any) {
+vendorSchema.statics.findByCredentials = async function(email: string, password: string) {
     const vendor = await Vendor.findOne({ email })
 
     if (!vendor) {
@@ -77,8 +76,8 @@ vendorSchema.statics.findByCredentials = async function(email: string| any, pass
 }
 
 // Hash the plain text password before saving
-vendorSchema.post('save', async function (doc:any,next:any) {
-    const vendor = doc
+vendorSchema.pre('save', async function (this :any ,next:any){
+    const vendor = this
 
     if (vendor.isModified('password')) {
         vendor.password = await bcrypt.hash(vendor.password, 8)

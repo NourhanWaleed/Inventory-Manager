@@ -44,7 +44,9 @@ router.patch('/categories/:id', async(req: any, res: any) =>{
         return res.status(400).send({error: 'Invalid updates!'})
     }
     try {
-        const category = await Category.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true})
+        const category = await Category.findById(req.params.id)
+       updates.forEach((update) => category[update] = req.body[update])
+       await category.save()
         if(!category){
             return res.status(400).send()
         }

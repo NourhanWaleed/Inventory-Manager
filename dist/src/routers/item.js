@@ -48,7 +48,9 @@ router.patch('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, funct
         return res.status(400).send({ error: 'Invalid updates!' });
     }
     try {
-        const item = yield Item.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const item = yield Item.findById(req.params.id);
+        updates.forEach((update) => item[update] = req.body[update]);
+        yield item.save();
         if (!item) {
             return res.status(400).send();
         }

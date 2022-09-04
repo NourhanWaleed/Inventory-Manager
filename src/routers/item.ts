@@ -43,7 +43,9 @@ router.patch('/items/:id', async(req: any, res: any) =>{
         return res.status(400).send({error: 'Invalid updates!'})
     }
     try {
-        const item = await Item.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true})
+        const item = await Item.findById(req.params.id)
+       updates.forEach((update) => item[update] = req.body[update])
+       await item.save()
         if(!item){
             return res.status(400).send()
         }

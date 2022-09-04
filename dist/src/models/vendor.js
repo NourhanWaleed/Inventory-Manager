@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const Purchase_Order = require('./purchaseorder');
 const vendorSchema = new mongoose.Schema({
     name: {
@@ -36,12 +36,12 @@ const vendorSchema = new mongoose.Schema({
         minlength: 7,
         trim: true,
     },
-    /*tokens: [{
-        token: {
-            type: String,
-            required: true
-        }
-    }]*/
+    tokens: [{
+            token: {
+                type: String,
+                required: true
+            }
+        }]
 });
 vendorSchema.virtual('purchaseorders', {
     ref: 'Purchase_Order',
@@ -58,7 +58,7 @@ vendorSchema.methods.toJSON = function () {
 vendorSchema.methods.generateAuthToken = function () {
     return __awaiter(this, void 0, void 0, function* () {
         const vendor = this;
-        const token = jwt.sign({ _id: vendor._id.toString() }, process.env.JWT_SECRET);
+        const token = jwt.sign({ _id: vendor._id.toString() }, 'secret');
         vendor.tokens = vendor.tokens.concat({ token });
         yield vendor.save();
         return token;
@@ -78,9 +78,9 @@ vendorSchema.statics.findByCredentials = function (email, password) {
     });
 };
 // Hash the plain text password before saving
-vendorSchema.post('save', function (doc, next) {
+vendorSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
-        const vendor = doc;
+        const vendor = this;
         if (vendor.isModified('password')) {
             vendor.password = yield bcrypt.hash(vendor.password, 8);
         }

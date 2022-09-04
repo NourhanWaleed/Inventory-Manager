@@ -10,11 +10,21 @@ router.post('/vendors', async (req: any, res: any) => {
 
     try {
         await vendor.save()
-       // const token = await vendor.generateAuthToken()
-        res.status(201).send({ vendor})
+        const token = await vendor.generateAuthToken()
+        res.status(201).send({ vendor, token})
     } catch (e) {
         console.log(e)
         res.status(400).send(e)
+    }
+})
+
+router.post('/vendors/login', async(req: any, res: any) =>{
+    try{
+        const vendor = await Vendor.findByCredentials(req.body.email, req.body.password)
+        const token = await vendor.generateAuthToken()
+        res.send({vendor, token})
+    }catch(e){
+        res.status(400).send()
     }
 })
 
@@ -47,8 +57,11 @@ router.patch('/vendors/:id', async(req: any,res:any) => {
         return res.status(400).send({error: 'Invalid updates!'})
     }
     try {
-        const vendor = await Vendor.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true})
-        if(!vendor){
+    
+       const vendor = await Vendor.findById(req.params.id)
+       updates.forEach((update) => vendor[update] = req.body[update])
+       await vendor.save()
+       if(!vendor){
             return res.status(400).send()
         }
         res.send(vendor)
@@ -65,7 +78,7 @@ router.delete('/vendors/:id', async(req: any, res: any) => {
             }
             res.send(vendor)
     } catch (e) {
-res.status(500).send()
+res.status(500).send
     }
 })
 
@@ -128,48 +141,6 @@ router.delete('/users/me', auth, async (req, res) => {
         res.send(req.user)
     } catch (e) {
         res.status(500).send()
-    }
-})
-const upload = multer({
-    limits: {
-        fileSize: 1000000
-    },
-    fileFilter(req, file, cb) {
-        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-            return cb(new Error('Please upload an image'))
-        }
-
-        cb(undefined, true)
-    }
-})
-
-
-router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
-    const buffer = await sharp(req.file.buffer).resize({ width:250,height:250}).png().toBuffer()
-    req.user.avatar = buffer
-    await req.user.save()
-    res.send()
-}, (error, req, res, next) => {
-    res.status(400).send({ error: error.message })
-})
-
-router.delete('/users/me/avatar', auth, async (req, res) => {
-    req.user.avatar = undefined
-    await req.user.save()
-    res.send()
-})
-
-router.get('/users/:id/avatar', async (req,res) =>{
-    try{
-        const user = await User.findById(req.params.id)
-
-        if(!user || !user.avatar){
-            throw new Error()
-        }
-        res.set('Content-Type','image/png')
-        res.send(user.avatar)
-    } catch(e){
-        res.status(404).send()
     }
 })
 */
