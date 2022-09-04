@@ -14,6 +14,26 @@ router.post('/categories', async (req:any, res:any) =>{
     }
 })
 
+router.get('/categories',async (req: any, res: any) =>{
+    await Category.find({}).then((categories: any) =>{
+        res.send(categories)
+    }).catch((e: any) =>{
+        console.log(e)
+    })
+})
+
+router.get('/categories/:id', async (req: any, res: any) => {
+    const _id = req.params.id
+    await Category.findById(_id).then((category: any) =>{
+        if(!category){
+            return res.status(404).send()
+        }
+        res.send(category)
+    }).catch((e: any) =>{
+        res.status(500).send()
+    })
+})
+
 module.exports = router
 
 export{}

@@ -14,4 +14,24 @@ router.post('/items/:id', async (req:any, res:any) =>{
     }
 })
 
+router.get('/items',async (req: any, res: any) =>{
+    await Item.find({}).then((items: any) =>{
+        res.send(items)
+    }).catch((e: any) =>{
+        console.log(e)
+    })
+})
+
+router.get('/items/:id', async (req: any, res: any) => {
+    const _id = req.params.id
+    await Item.findById(_id).then((item: any) =>{
+        if(!item){
+            return res.status(404).send()
+        }
+        res.send(item)
+    }).catch((e: any) =>{
+        res.status(500).send()
+    })
+})
+
 module.exports = router

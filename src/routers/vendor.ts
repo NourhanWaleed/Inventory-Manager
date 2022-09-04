@@ -18,16 +18,24 @@ router.post('/vendors', async (req: any, res: any) => {
     }
 })
 
-router.get('/vendors',async (req:any, res:any) =>{
-    Vendor.find({}).then((vendors: any) =>{
+router.get('/vendors',async (req: any, res: any) =>{
+    await Vendor.find({}).then((vendors: any) =>{
         res.send(vendors)
     }).catch((e: any) =>{
         console.log(e)
     })
 })
 
-router.get('/vendors/:id', async (req:any, res:any) => {
-    res.send(req.vendor)
+router.get('/vendors/:id', async (req: any, res: any) => {
+    const _id = req.params.id
+    await Vendor.findById(_id).then((vendor: any) =>{
+        if(!vendor){
+            return res.status(404).send()
+        }
+        res.send(vendor)
+    }).catch((e: any) =>{
+        res.status(500).send()
+    })
 })
 /*
 router.post('/users/login', async (req, res) => {

@@ -23,5 +23,23 @@ router.post('/categories', (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.status(400).send(e);
     }
 }));
+router.get('/categories', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield Category.find({}).then((categories) => {
+        res.send(categories);
+    }).catch((e) => {
+        console.log(e);
+    });
+}));
+router.get('/categories/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const _id = req.params.id;
+    yield Category.findById(_id).then((category) => {
+        if (!category) {
+            return res.status(404).send();
+        }
+        res.send(category);
+    }).catch((e) => {
+        res.status(500).send();
+    });
+}));
 module.exports = router;
 //# sourceMappingURL=category.js.map

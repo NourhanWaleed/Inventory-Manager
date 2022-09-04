@@ -22,5 +22,23 @@ router.post('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, functi
         res.status(400).send(e);
     }
 }));
+router.get('/items', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield Item.find({}).then((items) => {
+        res.send(items);
+    }).catch((e) => {
+        console.log(e);
+    });
+}));
+router.get('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const _id = req.params.id;
+    yield Item.findById(_id).then((item) => {
+        if (!item) {
+            return res.status(404).send();
+        }
+        res.send(item);
+    }).catch((e) => {
+        res.status(500).send();
+    });
+}));
 module.exports = router;
 //# sourceMappingURL=item.js.map

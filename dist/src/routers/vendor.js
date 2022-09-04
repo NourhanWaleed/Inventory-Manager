@@ -28,14 +28,22 @@ router.post('/vendors', (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 }));
 router.get('/vendors', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    Vendor.find({}).then((vendors) => {
+    yield Vendor.find({}).then((vendors) => {
         res.send(vendors);
     }).catch((e) => {
         console.log(e);
     });
 }));
 router.get('/vendors/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send(req.vendor);
+    const _id = req.params.id;
+    yield Vendor.findById(_id).then((vendor) => {
+        if (!vendor) {
+            return res.status(404).send();
+        }
+        res.send(vendor);
+    }).catch((e) => {
+        res.status(500).send();
+    });
 }));
 /*
 router.post('/users/login', async (req, res) => {
