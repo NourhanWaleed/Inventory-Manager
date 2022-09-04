@@ -40,5 +40,23 @@ router.get('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(500).send();
     });
 }));
+router.patch('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const updates = Object.keys(req.body);
+    const allowedUpdates = ['name', 'category'];
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+    if (!isValidOperation) {
+        return res.status(400).send({ error: 'Invalid updates!' });
+    }
+    try {
+        const item = yield Item.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        if (!item) {
+            return res.status(400).send();
+        }
+        res.send(item);
+    }
+    catch (e) {
+        res.status(400).send(e);
+    }
+}));
 module.exports = router;
 //# sourceMappingURL=item.js.map

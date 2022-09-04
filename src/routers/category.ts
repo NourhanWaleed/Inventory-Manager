@@ -34,6 +34,27 @@ router.get('/categories/:id', async (req: any, res: any) => {
     })
 })
 
+
+router.patch('/categories/:id', async(req: any, res: any) =>{
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ['name']
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+
+    if(!isValidOperation){
+        return res.status(400).send({error: 'Invalid updates!'})
+    }
+    try {
+        const category = await Category.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true})
+        if(!category){
+            return res.status(400).send()
+        }
+        res.send(category)
+    }catch(e){
+        res.status(400).send(e)
+        console.log(e)
+    }
+})
+
 module.exports = router
 
 export{}

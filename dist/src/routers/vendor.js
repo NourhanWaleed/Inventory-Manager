@@ -45,6 +45,24 @@ router.get('/vendors/:id', (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.status(500).send();
     });
 }));
+router.patch('/vendors/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const updates = Object.keys(req.body);
+    const allowedUpdates = ['name', 'email', 'password'];
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+    if (!isValidOperation) {
+        return res.status(400).send({ error: 'Invalid updates!' });
+    }
+    try {
+        const vendor = yield Vendor.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        if (!vendor) {
+            return res.status(400).send();
+        }
+        res.send(vendor);
+    }
+    catch (e) {
+        res.status(400).send(e);
+    }
+}));
 /*
 router.post('/users/login', async (req, res) => {
     try {
@@ -77,10 +95,6 @@ router.post('/users/logoutAll', auth, async (req, res) => {
     } catch (e) {
         res.status(500).send()
     }
-})
-
-router.get('/users/me', auth, async (req, res) => {
-    res.send(req.user)
 })
 
 router.patch('/users/me', auth, async (req, res) => {

@@ -41,5 +41,24 @@ router.get('/categories/:id', (req, res) => __awaiter(void 0, void 0, void 0, fu
         res.status(500).send();
     });
 }));
+router.patch('/categories/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const updates = Object.keys(req.body);
+    const allowedUpdates = ['name'];
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+    if (!isValidOperation) {
+        return res.status(400).send({ error: 'Invalid updates!' });
+    }
+    try {
+        const category = yield Category.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        if (!category) {
+            return res.status(400).send();
+        }
+        res.send(category);
+    }
+    catch (e) {
+        res.status(400).send(e);
+        console.log(e);
+    }
+}));
 module.exports = router;
 //# sourceMappingURL=category.js.map
