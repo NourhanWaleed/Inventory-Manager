@@ -13,7 +13,7 @@ const express = require('express');
 const multer = require('multer');
 const sharp = require('sharp');
 const Vendor = require('../models/vendor');
-//const auth = require('../middleware/auth')
+const auth = require('../middleware/auth');
 const router = new express.Router();
 router.post('/vendors', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const vendor = new Vendor(req.body);
@@ -37,12 +37,38 @@ router.post('/vendors/login', (req, res) => __awaiter(void 0, void 0, void 0, fu
         res.status(400).send();
     }
 }));
-router.get('/vendors', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/vendors/logout', auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        req.vendor.tokens = req.vendor.tokens.filter((token) => {
+            return token.token !== req.token;
+        });
+        yield req.vendor.save();
+        res.send();
+    }
+    catch (e) {
+        res.status(500).send();
+        console.log(e);
+    }
+}));
+router.post('/vendors/logoutAll', auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        req.vendor.tokens = [];
+        yield req.vendor.save();
+        res.send();
+    }
+    catch (e) {
+        res.status(500).send();
+    }
+}));
+router.get('/vendors', auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     yield Vendor.find({}).then((vendors) => {
         res.send(vendors);
     }).catch((e) => {
         console.log(e);
     });
+}));
+router.get('/vendors/me', auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.send(req.vendor);
 }));
 router.get('/vendors/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const _id = req.params.id;
@@ -54,6 +80,24 @@ router.get('/vendors/:id', (req, res) => __awaiter(void 0, void 0, void 0, funct
     }).catch((e) => {
         res.status(500).send();
     });
+}));
+router.patch('/vendors/me', auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const updates = Object.keys(req.body);
+    const allowedUpdates = ['name', 'email', 'password'];
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+    if (!isValidOperation) {
+        return res.status(400).send({ error: 'Invalid updates!' });
+    }
+    //not working
+    try {
+        updates.forEach((update) => req.vendor[update] = req.body[update]);
+        yield req.vendor.save();
+        res.send(req.vendor);
+    }
+    catch (e) {
+        console.log(e);
+        res.status(400).send(e);
+    }
 }));
 router.patch('/vendors/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const updates = Object.keys(req.body);
@@ -75,6 +119,15 @@ router.patch('/vendors/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.status(400).send(e);
     }
 }));
+router.delete('/vendors/me', auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield req.vendor.remove();
+        res.send(req.vendor);
+    }
+    catch (e) {
+        res.status(500).send();
+    }
+}));
 router.delete('/vendors/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const vendor = yield Vendor.findByIdAndDelete(req.params.id);
@@ -87,67 +140,5 @@ router.delete('/vendors/:id', (req, res) => __awaiter(void 0, void 0, void 0, fu
         res.status(500).send;
     }
 }));
-/*
-router.post('/users/login', async (req, res) => {
-    try {
-        const user = await User.findByCredentials(req.body.email, req.body.password)
-        const token = await user.generateAuthToken()
-        res.send({ user, token })
-    } catch (e) {
-        res.status(400).send()
-    }
-})
-
-router.post('/users/logout', auth, async (req, res) => {
-    try {
-        req.user.tokens = req.user.tokens.filter((token) => {
-            return token.token !== req.token
-        })
-        await req.user.save()
-
-        res.send()
-    } catch (e) {
-        res.status(500).send()
-    }
-})
-
-router.post('/users/logoutAll', auth, async (req, res) => {
-    try {
-        req.user.tokens = []
-        await req.user.save()
-        res.send()
-    } catch (e) {
-        res.status(500).send()
-    }
-})
-
-router.patch('/users/me', auth, async (req, res) => {
-    const updates = Object.keys(req.body)
-    const allowedUpdates = ['name', 'email', 'password', 'age']
-    const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
-
-    if (!isValidOperation) {
-        return res.status(400).send({ error: 'Invalid updates!' })
-    }
-
-    try {
-        updates.forEach((update) => req.user[update] = req.body[update])
-        await req.user.save()
-        res.send(req.user)
-    } catch (e) {
-        res.status(400).send(e)
-    }
-})
-
-router.delete('/users/me', auth, async (req, res) => {
-    try {
-        await req.user.remove()
-        sendCancellationEmail(req.user.email, req.user.name)
-        res.send(req.user)
-    } catch (e) {
-        res.status(500).send()
-    }
-})
-*/
 module.exports = router;
 //# sourceMappingURL=vendor.js.map
