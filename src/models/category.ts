@@ -23,9 +23,11 @@ categorySchema.methods.toJSON = function () {
 
 
 //remove items when category is deleted 
-categorySchema.pre('remove', async function (doc:any, next:any) {
+categorySchema.post('remove', async function (doc:any, next:any) {
     const category = doc
-    await Item.deleteMany({ category: category._id })
+    console.log(category)
+    const deleted =await Item.deleteMany({ category: category._id })
+    console.log(deleted)
     next()
 })
 

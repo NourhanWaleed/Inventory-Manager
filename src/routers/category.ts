@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb"
+
 const express = require('express')
 const Category = require('../models/category')
 const router = new express.Router()
@@ -58,9 +60,10 @@ router.patch('/categories/:id', async(req: any, res: any) =>{
 
 router.delete('/categories/:id', async(req: any, res: any) => {
     try{
-       // await req.category.remove()
-        const category = await Category.findByIdAndDelete(req.params.id)
-
+        const category = await Category.findById(req.params.id)
+        console.log(category)
+        category.remove()
+        
             if(!category){
                 return res.status(404).send()
             }

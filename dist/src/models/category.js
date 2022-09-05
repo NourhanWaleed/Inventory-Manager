@@ -30,10 +30,12 @@ categorySchema.methods.toJSON = function () {
     return categoryObject;
 };
 //remove items when category is deleted 
-categorySchema.pre('remove', function (doc, next) {
+categorySchema.post('remove', function (doc, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const category = doc;
-        yield Item.deleteMany({ category: category._id });
+        console.log(category);
+        const deleted = yield Item.deleteMany({ category: category._id });
+        console.log(deleted);
         next();
     });
 });

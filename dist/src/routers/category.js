@@ -63,8 +63,9 @@ router.patch('/categories/:id', (req, res) => __awaiter(void 0, void 0, void 0, 
 }));
 router.delete('/categories/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // await req.category.remove()
-        const category = yield Category.findByIdAndDelete(req.params.id);
+        const category = yield Category.findById(req.params.id);
+        console.log(category);
+        category.remove();
         if (!category) {
             return res.status(404).send();
         }
