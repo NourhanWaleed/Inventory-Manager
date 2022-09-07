@@ -4,7 +4,7 @@ const Vendor = require('../models/vendor')
 const auth = async(req: any, res: any, next: any) => {
     try{
         const token = req.header('Authorization').replace('Bearer ','')
-        const decoded = await jwt.verify(token, 'secret')
+        const decoded = await jwt.verify(token, process.env.JWT_SECRET)
         const vendor = await Vendor.findOne({_id: decoded._id, 'tokens.token': token})
 
         if(!vendor){

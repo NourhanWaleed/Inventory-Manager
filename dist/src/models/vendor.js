@@ -58,7 +58,7 @@ vendorSchema.methods.toJSON = function () {
 vendorSchema.methods.generateAuthToken = function () {
     return __awaiter(this, void 0, void 0, function* () {
         const vendor = this;
-        const token = jwt.sign({ _id: vendor._id.toString() }, 'secret');
+        const token = jwt.sign({ _id: vendor._id.toString() }, process.env.JWT_SECRET);
         vendor.tokens = vendor.tokens.concat({ token });
         yield vendor.save();
         return token;

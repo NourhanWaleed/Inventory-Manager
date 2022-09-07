@@ -14,7 +14,7 @@ const Vendor = require('../models/vendor');
 const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const token = req.header('Authorization').replace('Bearer ', '');
-        const decoded = yield jwt.verify(token, 'secret');
+        const decoded = yield jwt.verify(token, process.env.JWT_SECRET);
         const vendor = yield Vendor.findOne({ _id: decoded._id, 'tokens.token': token });
         if (!vendor) {
             throw new Error();

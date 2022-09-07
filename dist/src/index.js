@@ -11,17 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const app = require('./app');
 const mongoose = require('mongoose');
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 //note: I know this is not the cleanest code I can write but it kept timingout and I found this solution on stackoverflow
 function start() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             //Database Connect
-            yield mongoose.connect('mongodb://127.0.0.1:27017/inventory-manager-api', {}, () => {
+            yield mongoose.connect(process.env.MONGODB_URL, {}, () => {
                 console.log("Database Connected");
             });
-            app.listen(3000, () => {
-                console.log("Server is running on port 3000 ...");
+            app.listen(port, () => {
+                console.log("Server is running on port " + port);
             });
         }
         catch (error) {
