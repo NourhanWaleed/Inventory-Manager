@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const app = require('./app');
 const mongoose = require('mongoose');
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 //note: I know this is not the cleanest code I can write but it kept timingout and I found this solution on stackoverflow
 function start() {
     return __awaiter(this, void 0, void 0, function* () {
