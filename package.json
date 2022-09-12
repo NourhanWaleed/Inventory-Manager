@@ -30,7 +30,7 @@
     "nodemon": "^2.0.19"
   },
   "scripts": {
-    "start": "node src/index.js nodemon dist/index.js --ignore dist/locales --ignore .adminbro/",
+    "start": "node src/index.js",
     "dev": "nodemon dist/index.js"
   },
   "keywords": [],
