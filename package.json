@@ -31,7 +31,7 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "dev": "env-cmd nodemon dist/src/index.js"
+    "dev": "env-cmd nodemon dist/index.js"
   },
   "keywords": [],
   "author": "",
